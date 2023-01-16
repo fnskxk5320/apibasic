@@ -11,11 +11,12 @@ logging:
         apibasic:
           req: trace
 
-#spring.datasource.url=xxx
-#spring.datasource.username=xxx
-#spring.datasource.password=xxx
-#spring:
-#  datasource:
-#    url: xxx
-#    username: xxx
-#    password: xxx
+springdoc:
+  swagger-ui:
+    path: /myapi.html
+
+spring:
+  datasource:
+    url: jdbc:mariadb://localhost:3306/demodb
+    username: root
+    password: mariadb
