@@ -141,6 +141,7 @@ class MemberRepositoryTest {
         foundMember.ifPresent(m -> {
             m.setNickName(newNickName);
             m.setGender(newGender);
+            memberRepository.save(m);
         });
 
         Optional<MemberEntity> modifiedMember = memberRepository.findById(userCode);

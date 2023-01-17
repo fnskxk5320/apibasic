@@ -1,26 +1,22 @@
 package com.example.apibasic.post.api;
 
-import com.example.apibasic.post.dto.*;
-import com.example.apibasic.post.entity.PostEntity;
+import com.example.apibasic.post.dto.PostCreateDTO;
+import com.example.apibasic.post.dto.PostDetailResponseDTO;
+import com.example.apibasic.post.dto.PostListResponseDTO;
+import com.example.apibasic.post.dto.PostModifyDTO;
 import com.example.apibasic.post.repository.PostRepository;
 import com.example.apibasic.post.service.PostService;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static java.util.stream.Collectors.*;
 
 // 리소스 : 게시물 (Post)
 /*
@@ -108,10 +104,18 @@ public class PostApiController {
         log.info("/posts POST request");
         log.info("게시물 정보: {}", createDTO);
 
-        return postService.insert(createDTO)
-                ? ResponseEntity.ok().body("INSERT-SUCCESS")
-                : ResponseEntity.badRequest().body("INSERT-FAIL")
-                ;
+
+        try {
+            PostDetailResponseDTO responseDTO = postService.insert(createDTO);
+            return  ResponseEntity
+                    .ok()
+                    .body(responseDTO);
+
+        } catch (RuntimeException e) {
+            return ResponseEntity
+                    .internalServerError()
+                    .body(e.getMessage());
+        }
 
     }
 
@@ -124,20 +128,32 @@ public class PostApiController {
         log.info("/posts/{} PATCH request", postNo);
         log.info("수정할 정보 : {}", modifyDTO);
 
-        return postService.update(postNo, modifyDTO)
-                ? ResponseEntity.ok().body("MODIFY-SUCCESS")
-                : ResponseEntity.badRequest().body("MODIFY-FAIL")
-                ;
-
+        try {
+            PostDetailResponseDTO responseDTO = postService.update(postNo,modifyDTO);
+            return ResponseEntity
+                    .ok()
+                    .body(responseDTO);
+        } catch (RuntimeException e) {
+            log.error("update fail!! caused by - {}", e.getMessage());
+            return ResponseEntity
+                    .internalServerError()
+                    .body(e.getMessage());
+        }
     }
     // 게시물 삭제
     @DeleteMapping("/{postNo}")
     public ResponseEntity<?> remove(@PathVariable Long postNo) {
         log.info("/posts/{} DELETE request", postNo);
-        return postService.delete(postNo)
-                ? ResponseEntity.ok().body("DELETE-SUCCESS")
-                : ResponseEntity.badRequest().body("DELETE-FAIL")
-                ;
+        try {
+            postService.delete(postNo);
+            return ResponseEntity
+                    .ok()
+                    .body("Delete Success!!");
+        } catch (RuntimeException e) {
+            return ResponseEntity
+                    .internalServerError()
+                    .body(e.getMessage());
+        }
 
     }
 
