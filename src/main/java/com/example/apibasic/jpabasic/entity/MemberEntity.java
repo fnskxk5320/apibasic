@@ -33,3 +33,4 @@ public class MemberEntity {
     @UpdateTimestamp // UPDATE 시점에 서버 시간을 자동으로 입력
     private LocalDateTime modifyDate; // 정보 수정 시간
 }
+

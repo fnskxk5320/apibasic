@@ -1,9 +1,6 @@
 package com.example.apibasic.post.api;
 
-import com.example.apibasic.post.dto.PostCreateDTO;
-import com.example.apibasic.post.dto.PostDetailResponseDTO;
-import com.example.apibasic.post.dto.PostListResponseDTO;
-import com.example.apibasic.post.dto.PostModifyDTO;
+import com.example.apibasic.post.dto.*;
 import com.example.apibasic.post.repository.PostRepository;
 import com.example.apibasic.post.service.PostService;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -45,11 +42,12 @@ public class PostApiController {
 
     // 게시물 목록 조회
     @GetMapping
-    public ResponseEntity<?> list() {
+    public ResponseEntity<?> list(PageRequestDTO pageRequestDTO) {
         log.info("/posts GET request");
+        log.info("request page info - {}", pageRequestDTO);
 
         try {
-            PostListResponseDTO listResponseDTO = postService.getList();
+            PostListResponseDTO listResponseDTO = postService.getList(pageRequestDTO);
 
             return ResponseEntity
                     .ok()

@@ -48,12 +48,26 @@ class MemberRepositoryTest {
                 .nickName("고준휘")
                 .gender(Gender.FEMALE)
                 .build();
+        MemberEntity saveMember4 = MemberEntity.builder()
+                .account("ddd1234")
+                .password("1234")
+                .nickName("김민석")
+                .gender(Gender.MALE)
+                .build();
+        MemberEntity saveMember5 = MemberEntity.builder()
+                .account("eee1234")
+                .password("1234")
+                .nickName("정재민")
+                .gender(Gender.FEMALE)
+                .build();
 
         //when
 
         memberRepository.save(saveMember1);
         memberRepository.save(saveMember2);
         memberRepository.save(saveMember3);
+        memberRepository.save(saveMember4);
+        memberRepository.save(saveMember5);
 
 
     }
@@ -149,8 +163,93 @@ class MemberRepositoryTest {
         assertEquals("유영재", modifiedMember.get().getNickName());
         assertEquals(Gender.FEMALE, modifiedMember.get().getGender());
 
+    }
 
+    @Test
+    @DisplayName("쿼리 메서드를 사용하여 여성회원만 조회해야 한다.")
+    void findByGenderTest() {
+        // given
+        Gender gender = Gender.FEMALE;
+        // when
+        List<MemberEntity> list = memberRepository.findByGender(gender);
+        // then
+        list.forEach(m ->
+        {       System.out.println(m);
+                assertTrue(m.getGender()==Gender.FEMALE);
+        });
+        }
 
+    @Test
+    @DisplayName("쿼리 메서드를 사용하여 계정명이 aaa1234이면서 남성인 회원만 조회해야 한다.")
+    void findByAccountAndGenderTest() {
+        // given
+        Gender gender = Gender.MALE;
+        String account = "aaa1234";
+        // when
+        List<MemberEntity> list = memberRepository.findByAccountAndGender(account, gender);
+        // then
+        list.forEach(m ->
+        {       System.out.println(m);
+            assertTrue(m.getGender()==Gender.MALE);
+            assertEquals(m.getAccount(), account);
+        });
+    }
 
+    @Test
+    @DisplayName("쿼리 메서드를 사용하여 이름에 '박'이 포함된 회원만 조회해야 한다.")
+    void findByNickNameContainingTest() {
+        // given
+        String nickName = "박";
+        // when
+        List<MemberEntity> list = memberRepository.findByNickNameContaining(nickName);
+        // then
+        list.forEach(m ->
+        {       System.out.println(m);
+            assertTrue(m.getNickName().contains("박"));
+        });
+    }
+
+    @Test
+    @DisplayName("JPQL을 사용해서 계정명이 ccc1234인 회원을 조회해야 한다.")
+    void getMemberByAccountTest() {
+        // given
+        String account = "ccc1234";
+        // when
+        MemberEntity member = memberRepository.getMemberByAccount(account);
+        // then
+        System.out.println(member);
+        assertEquals("고준휘", member.getNickName());
+    }
+
+    @Test
+    @DisplayName("JPQL을 사용해서 닉네임이 김민석이면서 성별이 남성인 회원을 조회해야 한다.")
+    void getMembersByNickAndGenderTest() {
+        // given
+        String nickName = "김민석";
+        Gender gender = Gender.MALE;
+        // when
+        List<MemberEntity> members = memberRepository.getMembersByNickAndGender(nickName, gender);
+        // then
+        members.forEach(m ->
+        {
+            System.out.println(m);
+            assertTrue(gender==m.getGender());
+            assertEquals("김민석", m.getNickName());
+
+        });
+    }
+
+    @Test
+    @DisplayName("JPQL을 사용하여 이름에 '박'이 포함된 회원만 조회해야 한다.")
+    void getMembersByNickNameTest() {
+        // given
+        String nickName = "박";
+        // when
+        List<MemberEntity> list = memberRepository.getMembersByNickName(nickName);
+        // then
+        list.forEach(m ->
+        {       System.out.println(m);
+            assertTrue(m.getNickName().contains("박"));
+        });
     }
 }

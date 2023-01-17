@@ -12,5 +12,6 @@ import java.util.List;
 
 public class PostListResponseDTO {
     private int count;
+    private PageResponseDTO pageResponseDTO;
     private List<PostResponseDTO> posts;
 }
